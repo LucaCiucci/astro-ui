@@ -189,7 +189,7 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 		top: 0;
 		z-index: 20;
 		border-bottom: 1px solid var(--border);
-		background: rgba(9, 11, 13, 0.88);
+		background: var(--surface-glass);
 		backdrop-filter: blur(16px);
 	}
 
@@ -256,7 +256,7 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 	.nav-link.is-active,
 	.nav-link:focus-visible {
 		color: var(--text);
-		background: rgba(255, 255, 255, 0.045);
+		background: var(--hover-white);
 		outline: none;
 	}
 
@@ -280,8 +280,8 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 		padding: 8px;
 		border: 1px solid var(--border-strong);
 		border-radius: 8px;
-		background: #0d1012;
-		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+		background: var(--surface-overlay);
+		box-shadow: var(--shadow-dropdown);
 		opacity: 0;
 		transform: translateY(-4px);
 		visibility: hidden;
@@ -311,7 +311,7 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 	}
 
 	.nav-menu__link:hover {
-		background: rgba(34, 216, 204, 0.08);
+		background: var(--hover-accent);
 		color: var(--text);
 	}
 
@@ -352,11 +352,11 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 		height: 36px;
 		align-items: center;
 		gap: 8px;
-		border: 1px solid rgba(255, 255, 255, 0.08);
+		border: 1px solid var(--input-border);
 		border-radius: 8px;
-		background: rgba(255, 255, 255, 0.07);
+		background: var(--input-bg);
 		padding: 0 10px 0 12px;
-		color: #9aa3aa;
+		color: var(--input-text);
 		font: inherit;
 		font-size: 0.88rem;
 		line-height: 1;
@@ -366,8 +366,8 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 
 	pagefind-modal-trigger :global(.pf-trigger-btn:hover),
 	pagefind-modal-trigger :global(.pf-trigger-btn:focus-visible) {
-		border-color: rgba(34, 216, 204, 0.28);
-		background: rgba(255, 255, 255, 0.1);
+		border-color: var(--focus-accent);
+		background: var(--input-bg-hover);
 		color: var(--text-soft);
 		outline: none;
 	}
@@ -396,9 +396,9 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 
 	pagefind-modal-trigger :global(.pf-trigger-key) {
 		border-radius: 4px;
-		background: rgba(0, 0, 0, 0.52);
+		background: var(--kbd-bg);
 		padding: 2px 6px;
-		color: #a8b4ba;
+		color: var(--kbd-text);
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 		font-size: 0.68rem;
 		font-weight: 800;
@@ -413,11 +413,11 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 		align-items: center;
 		justify-content: space-between;
 		gap: 8px;
-		border: 1px solid rgba(255, 255, 255, 0.08);
+		border: 1px solid var(--input-border);
 		border-radius: 8px;
-		background: rgba(255, 255, 255, 0.07);
+		background: var(--input-bg);
 		padding: 0 8px 0 12px;
-		color: #9aa3aa;
+		color: var(--input-text);
 		font-family: inherit;
 		font-size: 0.88rem;
 		cursor: pointer;
@@ -425,9 +425,9 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 
 	.search-fallback kbd {
 		border-radius: 4px;
-		background: rgba(0, 0, 0, 0.52);
+		background: var(--kbd-bg);
 		padding: 2px 6px;
-		color: #a8b4ba;
+		color: var(--kbd-text);
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 		font-size: 0.68rem;
 		font-weight: 800;
@@ -516,7 +516,7 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 	.mobile-nav__backdrop {
 		position: absolute;
 		inset: 0;
-		background: rgba(0, 0, 0, 0.6);
+		background: var(--surface-backdrop);
 		backdrop-filter: blur(4px);
 		animation: fade-in 200ms ease;
 	}
@@ -573,7 +573,7 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 	.mobile-nav__link:hover,
 	.mobile-nav__link.is-active {
 		color: var(--text);
-		background: rgba(255, 255, 255, 0.045);
+		background: var(--hover-white);
 	}
 
 	.mobile-nav__search {

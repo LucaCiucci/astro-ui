@@ -104,6 +104,13 @@ const {
     canvas.height = Math.round(height * pixelRatio);
     context.scale(pixelRatio, pixelRatio);
 
+    const style = getComputedStyle(canvas);
+    const delaunayFillCyan = style.getPropertyValue('--delaunay-fill-cyan').trim();
+    const delaunayFillMagenta = style.getPropertyValue('--delaunay-fill-magenta').trim();
+    const delaunayStrokeCyan = style.getPropertyValue('--delaunay-stroke-cyan').trim();
+    const delaunayStrokeMagenta = style.getPropertyValue('--delaunay-stroke-magenta').trim();
+    const delaunayPoint = style.getPropertyValue('--delaunay-point').trim();
+
     const rng = random(271828);
     const density = Number(canvas.dataset.density) || 72;
     const points = Array.from({ length: density }, () => {
@@ -131,17 +138,17 @@ const {
       context.lineTo(triangle.c.x, triangle.c.y);
       context.closePath();
       context.fillStyle = cyanWeight > 0.55
-        ? 'rgba(34, 216, 204, 0.018)'
-        : 'rgba(185, 34, 140, 0.012)';
+        ? delaunayFillCyan
+        : delaunayFillMagenta;
       context.fill();
       context.strokeStyle = cyanWeight > 0.55
-        ? 'rgba(77, 224, 215, 0.13)'
-        : 'rgba(196, 72, 157, 0.09)';
+        ? delaunayStrokeCyan
+        : delaunayStrokeMagenta;
       context.lineWidth = 0.65;
       context.stroke();
     }
 
-    context.fillStyle = 'rgba(232, 255, 253, 0.26)';
+    context.fillStyle = delaunayPoint;
     for (const point of points) {
       context.beginPath();
       context.arc(point.x, point.y, 0.8, 0, Math.PI * 2);
@@ -198,6 +205,11 @@ const {
   .delaunay-background {
     position: absolute;
     z-index: 0;
+    --delaunay-fill-cyan: rgba(34, 216, 204, 0.018);
+    --delaunay-fill-magenta: rgba(185, 34, 140, 0.012);
+    --delaunay-stroke-cyan: rgba(77, 224, 215, 0.13);
+    --delaunay-stroke-magenta: rgba(196, 72, 157, 0.09);
+    --delaunay-point: rgba(232, 255, 253, 0.26);
     inset: 0;
     width: 100%;
     height: 100%;

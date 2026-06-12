@@ -15,7 +15,7 @@
   border: 1px solid var(--border-strong);
   border-radius: 8px;
   padding: 9px 16px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--input-bg);
   color: var(--text);
   font-weight: 700;
   text-decoration: none;
@@ -26,13 +26,13 @@
 }
 
 .hero__actions .hero-button:hover {
-  border-color: rgba(34, 216, 204, 0.55);
-  background: rgba(34, 216, 204, 0.1);
+  border-color: var(--border-accent);
+  background: var(--active-accent);
   transform: translateY(-1px);
 }
 
 .hero__actions .hero-button--primary {
-  border-color: rgba(34, 216, 204, 0.55);
-  background: linear-gradient(135deg, rgba(21, 152, 255, 0.22), rgba(34, 216, 204, 0.14));
-  color: #eefdff;
+  border-color: var(--border-accent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-blue) 22%, transparent), color-mix(in srgb, var(--accent) 14%, transparent));
+  color: color-mix(in srgb, var(--accent) 60%, white);
 }
