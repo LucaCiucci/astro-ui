@@ -1,0 +1,21 @@
+---
+import MarkdownIt from 'markdown-it';
+
+export interface Props {
+  kind?: 'inline' | 'block';
+  text: string;
+}
+
+const { kind = 'block', text } = Astro.props;
+
+const md = new MarkdownIt();
+
+const rendered = (() => {
+  if (kind === 'inline') {
+    return md.renderInline(text);
+  } else {
+    return md.render(text);
+  }
+})();
+---
+<Fragment set:html={rendered} />

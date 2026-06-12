@@ -1,0 +1,99 @@
+---
+interface Props {
+  basePath: string;
+  count: number;
+  title: string;
+}
+
+const { basePath, count, title } = Astro.props;
+---
+
+<section class="viewer" data-slide-viewer data-base-path={basePath} data-count={count}>
+  <img src={`${basePath}/1.svg`} alt={`${title}, slide 1`} data-slide />
+  <div class="controls">
+    <button type="button" data-previous>← Previous</button>
+    <span><strong data-current>1</strong> / {count}</span>
+    <button type="button" data-next>Next →</button>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-slide-viewer]').forEach(viewer => {
+    const image = viewer.querySelector<HTMLImageElement>('[data-slide]');
+    const currentLabel = viewer.querySelector<HTMLElement>('[data-current]');
+    const previous = viewer.querySelector<HTMLButtonElement>('[data-previous]');
+    const next = viewer.querySelector<HTMLButtonElement>('[data-next]');
+    const basePath = viewer.dataset.basePath;
+    const count = Number(viewer.dataset.count);
+    if (!image || !currentLabel || !previous || !next || !basePath || !count) return;
+
+    let current = 1;
+    const show = (slide: number) => {
+      current = Math.min(Math.max(slide, 1), count);
+      image.src = `${basePath}/${current}.svg`;
+      image.alt = image.alt.replace(/slide \d+$/, `slide ${current}`);
+      currentLabel.textContent = String(current);
+      previous.disabled = current === 1;
+      next.disabled = current === count;
+    };
+
+    previous.addEventListener('click', () => show(current - 1));
+    next.addEventListener('click', () => show(current + 1));
+    show(current);
+  });
+</script>
+
+<style>
+  .viewer {
+    overflow: hidden;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    background: white;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .controls {
+    display: grid;
+    padding: 0.7rem;
+    background: var(--background-raised);
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  button {
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    padding: 0.4rem 0.7rem;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  button:last-child {
+    justify-self: end;
+  }
+
+  button:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  span {
+    color: var(--text-muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+  }
+</style>

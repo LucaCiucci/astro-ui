@@ -1,0 +1,28 @@
+{
+  "name": "@luca/astro-ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Astro components and styles for Luca's websites.",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    "./components": "./src/components/index.ts",
+    "./components/hero_actions": "./src/components/hero_actions/index.ts",
+    "./project": "./src/components/project/index.ts",
+    "./styles/global.css": "./src/styles/global.css"
+  },
+  "peerDependencies": {
+    "astro": "^5.0.0",
+    "@types/markdown-it": "^14.1.2"
+  },
+  "devDependencies": {
+    "astro": "^5.13.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "astro",
+    "astro-component"
+  ]
+}

@@ -1,0 +1,142 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  socialLinks?: SocialLink[];
+  lastUpdated?: string;
+}
+
+export interface SocialLink {
+  label: string;
+  href: string;
+  icon: string;
+}
+
+const { socialLinks = [], lastUpdated } = Astro.props as Props;
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+	<div class="site-footer__inner">
+		<div class="footer-brand">
+			<a class="footer-brand__link" href="/" aria-label="Luca Ciucci home">
+				<span class="footer-brand__name">Luca Ciucci</span>
+			</a>
+			<p class="footer-tagline">Software, science, and engineering projects</p>
+		</div>
+
+		<nav class="footer-social" aria-label="Social links">
+			{socialLinks.map((link) => (
+				<a
+					class="footer-social__link"
+					href={link.href}
+					aria-label={link.label}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<Icon name={link.icon} class="footer-social__icon" />
+				</a>
+			))}
+		</nav>
+
+		<div class="footer-bottom">
+			<p class="footer-copyright">&copy; {currentYear} Luca Ciucci. All rights reserved.</p>
+			{lastUpdated && <p class="footer-updated">Last updated {lastUpdated}</p>}
+		</div>
+	</div>
+</footer>
+
+<style>
+	.site-footer {
+		position: relative;
+		z-index: 1;
+		border-top: 1px solid var(--border);
+		margin-top: 96px;
+		background: rgba(9, 11, 13, 0.6);
+	}
+
+	.site-footer__inner {
+		display: grid;
+		width: min(100% - (var(--page-gutter) * 2), var(--header-width));
+		margin: 0 auto;
+		padding: 40px 0 32px;
+		gap: 24px;
+	}
+
+	.footer-brand__link {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		color: var(--text);
+		font-size: 1rem;
+		font-weight: 760;
+		text-decoration: none;
+	}
+
+	.footer-tagline {
+		margin: 4px 0 0;
+		color: var(--text-muted);
+		font-size: 0.85rem;
+	}
+
+	.footer-social {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.footer-social__link {
+		display: inline-flex;
+		width: 36px;
+		height: 36px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 8px;
+		color: var(--text-muted);
+		text-decoration: none;
+		transition:
+			background 160ms ease,
+			color 160ms ease;
+	}
+
+	.footer-social__link:hover {
+		background: rgba(255, 255, 255, 0.045);
+		color: var(--text);
+	}
+
+	.footer-social__icon {
+		display: inline-flex;
+		line-height: 0;
+	}
+
+	.footer-bottom {
+		padding-top: 20px;
+		border-top: 1px solid var(--border);
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	.footer-copyright {
+		margin: 0;
+		color: var(--text-muted);
+		font-size: 0.82rem;
+	}
+
+	.footer-updated {
+		margin: 0;
+		color: var(--text-muted);
+		font-size: 0.82rem;
+	}
+
+	@media (max-width: 760px) {
+		.site-footer {
+			margin-top: 64px;
+		}
+
+		.site-footer__inner {
+			padding: 32px 0 28px;
+		}
+	}
+</style>

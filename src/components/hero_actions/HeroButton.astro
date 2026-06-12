@@ -1,0 +1,13 @@
+---
+interface Props {
+  href: string;
+  role?: "normal" | "primary";
+}
+const { href, role = "normal" } = Astro.props as Props;
+
+const className = `hero-button ${role === "primary" ? "hero-button--primary" : ""}`;
+---
+
+<a class={className} href={href}>
+  <slot />
+</a>

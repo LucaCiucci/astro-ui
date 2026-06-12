@@ -1,0 +1,107 @@
+---
+import { Md } from '@luca/astro-ui/components';
+
+export interface TimelineEntry {
+  period: string;
+  title: string;
+  description: string;
+  image?: string;
+}
+
+interface Props {
+  entries: TimelineEntry[];
+  imageBasePath?: string;
+}
+
+const { entries, imageBasePath = '/img/' } = Astro.props;
+---
+
+<div class="timeline">
+  {entries.map(entry => (
+    <article class="entry">
+      <div class="period">{entry.period}</div>
+      <div class="content">
+        {entry.image && <img src={`${imageBasePath}${entry.image}`} alt="" />}
+        <h2><Md kind="inline" text={entry.title} /></h2>
+        <div class="description"><Md kind="block" text={entry.description} /></div>
+      </div>
+    </article>
+  ))}
+</div>
+
+<style>
+  .timeline {
+    position: relative;
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    top: 1.45rem;
+    bottom: 1.45rem;
+    left: 9.4rem;
+    width: 1px;
+    background: var(--border-strong);
+  }
+
+  .entry {
+    position: relative;
+    display: grid;
+    grid-template-columns: 8.2rem minmax(0, 1fr);
+    gap: 2.4rem;
+  }
+
+  .entry::before {
+    content: "";
+    position: absolute;
+    top: 1.35rem;
+    left: calc(9.4rem - 4px);
+    width: 7px;
+    height: 7px;
+    border: 2px solid var(--background);
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 1px rgba(34, 216, 204, 0.5);
+  }
+
+  .period {
+    padding-top: 1.15rem;
+    color: var(--text-muted);
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1.45;
+    text-align: right;
+  }
+
+  .content {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    background: var(--cv-surface, var(--background-raised));
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .description :global(p) {
+    margin: 0.55rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.86rem;
+  }
+
+  img {
+    width: 96px;
+    height: 64px;
+    margin: 0 0 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    float: right;
+    object-fit: cover;
+  }
+</style>

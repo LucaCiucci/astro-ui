@@ -1,0 +1,118 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  date?: string;
+  tags?: string[];
+}
+
+const { title, description, date, tags = [] } = Astro.props;
+---
+
+<article class="project-article">
+  <header>
+    <a class="back" href="/projects">← All projects</a>
+    <p class="eyebrow">{date ? `Project archive · ${date}` : 'Project archive'}</p>
+    <h1>{title}</h1>
+    <p class="description">{description}</p>
+    {tags.length > 0 && <ul>{tags.map(tag => <li>{tag}</li>)}</ul>}
+  </header>
+  <div class="content"><slot /></div>
+</article>
+
+<style>
+  header {
+    max-width: 48rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .back {
+    display: inline-flex;
+    margin-bottom: 2rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 8vw, 4.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.06em;
+  }
+
+  .description {
+    margin: 1rem 0 0;
+    color: var(--text-muted);
+    font-size: 1.08rem;
+    line-height: 1.65;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1.2rem 0 0;
+    padding: 0;
+    gap: 0.4rem;
+    list-style: none;
+  }
+
+  li {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.22rem 0.58rem;
+    color: var(--text-soft);
+    font-size: 0.72rem;
+    font-weight: 650;
+  }
+
+  .content {
+    color: var(--text-soft);
+  }
+
+  .content :global(h2) {
+    margin: 3.5rem 0 0.8rem;
+    color: var(--text);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    letter-spacing: -0.035em;
+  }
+
+  .content :global(p),
+  .content :global(li) {
+    line-height: 1.75;
+  }
+
+  .content :global(img) {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .content :global(iframe) {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--background-raised);
+  }
+
+  .content :global(.video) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .content :global(.square-embed) {
+    width: min(100%, 620px);
+    aspect-ratio: 1;
+  }
+
+  .content :global(pre) {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    background: var(--background-raised);
+    color: var(--text-soft);
+    font-size: 0.78rem;
+  }
+</style>

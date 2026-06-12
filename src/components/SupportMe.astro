@@ -1,0 +1,49 @@
+---
+export interface Props {
+  title?: string;
+  link?: string;
+}
+
+const { link = '/donate', title = 'Support my work' } = Astro.props as Props;
+---
+<a class="donate-link" href={link}>{title}</a>
+
+<style>
+.donate-link {
+  display: inline-flex;
+  height: 34px;
+  align-items: center;
+  border-radius: 7px;
+  padding: 0 12px;
+  background: var(--warning);
+  color: #221b00;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.donate-link::before {
+  content: "☕";
+  margin-right: 7px;
+}
+
+:global(.mobile-nav) .donate-link {
+  justify-content: center;
+}
+
+@media (max-width: 1099px) {
+  .donate-link {
+    padding: 0 10px;
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 920px) {
+  :global(.header-tools) .donate-link {
+    display: none;
+  }
+}
+
+</style>
+

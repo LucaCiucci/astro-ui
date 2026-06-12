@@ -1,0 +1,208 @@
+---
+interface Props {
+  class?: string;
+  density?: number;
+  animated?: boolean;
+}
+
+const {
+  class: className,
+  density = 72,
+  animated = false,
+} = Astro.props;
+---
+
+<canvas
+  class:list={['delaunay-background', className]}
+  data-delaunay-background
+  data-density={density}
+  data-animated={animated}
+  aria-hidden="true"
+></canvas>
+
+<script>
+  interface Point {
+    x: number;
+    y: number;
+  }
+
+  interface Triangle {
+    a: Point;
+    b: Point;
+    c: Point;
+  }
+
+  const random = (seed: number) => () => {
+    seed |= 0;
+    seed = seed + 0x6d2b79f5 | 0;
+    let value = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    value = value + Math.imul(value ^ value >>> 7, 61 | value) ^ value;
+    return ((value ^ value >>> 14) >>> 0) / 4294967296;
+  };
+
+  const circumcircleContains = (triangle: Triangle, point: Point) => {
+    const ax = triangle.a.x;
+    const ay = triangle.a.y;
+    const bx = triangle.b.x;
+    const by = triangle.b.y;
+    const cx = triangle.c.x;
+    const cy = triangle.c.y;
+    const denominator = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by));
+
+    if (Math.abs(denominator) < 0.001) return false;
+
+    const a2 = ax * ax + ay * ay;
+    const b2 = bx * bx + by * by;
+    const c2 = cx * cx + cy * cy;
+    const ux = (a2 * (by - cy) + b2 * (cy - ay) + c2 * (ay - by)) / denominator;
+    const uy = (a2 * (cx - bx) + b2 * (ax - cx) + c2 * (bx - ax)) / denominator;
+    const radiusSquared = (ux - ax) ** 2 + (uy - ay) ** 2;
+
+    return (point.x - ux) ** 2 + (point.y - uy) ** 2 <= radiusSquared;
+  };
+
+  const triangulate = (points: Point[], width: number, height: number) => {
+    const margin = Math.max(width, height) * 4;
+    const superTriangle: Triangle = {
+      a: { x: -margin, y: height + margin },
+      b: { x: width / 2, y: -margin },
+      c: { x: width + margin, y: height + margin },
+    };
+    let triangles = [superTriangle];
+
+    for (const point of points) {
+      const bad = triangles.filter(triangle => circumcircleContains(triangle, point));
+      const edges = bad.flatMap(triangle => [
+        [triangle.a, triangle.b],
+        [triangle.b, triangle.c],
+        [triangle.c, triangle.a],
+      ] as [Point, Point][]);
+
+      triangles = triangles.filter(triangle => !bad.includes(triangle));
+
+      for (const edge of edges) {
+        const duplicates = edges.filter(candidate =>
+          (candidate[0] === edge[0] && candidate[1] === edge[1])
+          || (candidate[0] === edge[1] && candidate[1] === edge[0])
+        );
+        if (duplicates.length === 1) triangles.push({ a: edge[0], b: edge[1], c: point });
+      }
+    }
+
+    return triangles.filter(triangle =>
+      !Object.values(triangle).some(point => Object.values(superTriangle).includes(point))
+    );
+  };
+
+  const render = (canvas: HTMLCanvasElement, elapsed = 0) => {
+    const context = canvas.getContext('2d');
+    const { width, height } = canvas.getBoundingClientRect();
+    if (!context || width < 1 || height < 1) return;
+
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+    canvas.width = Math.round(width * pixelRatio);
+    canvas.height = Math.round(height * pixelRatio);
+    context.scale(pixelRatio, pixelRatio);
+
+    const rng = random(271828);
+    const density = Number(canvas.dataset.density) || 72;
+    const points = Array.from({ length: density }, () => {
+      const point = {
+        x: rng() * width,
+        y: rng() * height,
+        driftX: 3 + rng() * 10,
+        driftY: 3 + rng() * 10,
+        phase: rng() * Math.PI * 2,
+      };
+      const time = elapsed / 9000 * 2;
+
+      point.x += Math.sin(time + point.phase) * point.driftX;
+      point.y += Math.cos(time * 0.8 + point.phase) * point.driftY;
+      return point;
+    });
+    const triangles = triangulate(points, width, height);
+
+    for (const triangle of triangles) {
+      const centerX = (triangle.a.x + triangle.b.x + triangle.c.x) / 3;
+      const cyanWeight = centerX / width;
+      context.beginPath();
+      context.moveTo(triangle.a.x, triangle.a.y);
+      context.lineTo(triangle.b.x, triangle.b.y);
+      context.lineTo(triangle.c.x, triangle.c.y);
+      context.closePath();
+      context.fillStyle = cyanWeight > 0.55
+        ? 'rgba(34, 216, 204, 0.018)'
+        : 'rgba(185, 34, 140, 0.012)';
+      context.fill();
+      context.strokeStyle = cyanWeight > 0.55
+        ? 'rgba(77, 224, 215, 0.13)'
+        : 'rgba(196, 72, 157, 0.09)';
+      context.lineWidth = 0.65;
+      context.stroke();
+    }
+
+    context.fillStyle = 'rgba(232, 255, 253, 0.26)';
+    for (const point of points) {
+      context.beginPath();
+      context.arc(point.x, point.y, 0.8, 0, Math.PI * 2);
+      context.fill();
+    }
+  };
+
+  const initialise = (canvas: HTMLCanvasElement) => {
+    if (canvas.dataset.ready) return;
+    canvas.dataset.ready = 'true';
+
+    let frame = 0;
+    let lastRender = 0;
+    let visible = true;
+    const animated = canvas.dataset.animated === 'true'
+      && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const animate = (elapsed: number) => {
+      if (!visible) return;
+      if (elapsed - lastRender > 80) {
+        render(canvas, elapsed);
+        lastRender = elapsed;
+      }
+      frame = requestAnimationFrame(animate);
+    };
+
+    const queueRender = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(elapsed => {
+        render(canvas, animated ? elapsed : 0);
+        lastRender = elapsed;
+        if (animated) frame = requestAnimationFrame(animate);
+      });
+    };
+    const observer = new ResizeObserver(queueRender);
+    observer.observe(canvas);
+
+    if (animated && 'IntersectionObserver' in window) {
+      const visibilityObserver = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        cancelAnimationFrame(frame);
+        if (visible) frame = requestAnimationFrame(animate);
+      });
+      visibilityObserver.observe(canvas);
+    }
+
+    queueRender();
+  };
+
+  document.querySelectorAll<HTMLCanvasElement>('[data-delaunay-background]').forEach(initialise);
+</script>
+
+<style>
+  .delaunay-background {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.72;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, black 0%, black 62%, transparent 92%);
+  }
+</style>
