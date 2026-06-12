@@ -1,0 +1,255 @@
+---
+import { Header, Footer, MetaEx, type NavItem, type SocialLink } from "../components";
+import BasePage, { type Props as BasePageProps } from "./BasePage.astro";
+import "../../styles/global.css";
+
+interface Props extends BasePageProps {
+  headings?: PageHeading[];
+	heading_depth?: 2 | 3;
+  show_page_nav?: boolean;
+  nav_items?: NavItem[];
+  social_links?: SocialLink[];
+}
+
+interface PageHeading {
+	depth: number;
+	slug: string;
+	text: string;
+}
+
+const props = Astro.props as Props;
+const { headings = [], heading_depth = 3, show_page_nav = false, nav_items = [], social_links = [] } = props;
+const visible_headings = headings.filter((heading) => (heading.depth ?? 2) <= heading_depth);
+const showPageNav = show_page_nav || visible_headings.length > 1;
+
+const pagefind_stylesheet = '/pagefind/pagefind-component-ui.css';
+const pagefind_script = '/pagefind/pagefind-component-ui.js';
+---
+<BasePage {...props}>
+  <Fragment slot="head">
+    <link rel="stylesheet" href={pagefind_stylesheet} />
+    <script src={pagefind_script} defer></script>
+  </Fragment>
+
+  <Header name={props.site_name} items={nav_items} />
+  <div id="top" class:list={['page-shell', showPageNav && 'page-shell--with-nav']}>
+    <main class="site-main" data-pagefind-body>
+      <slot />
+    </main>
+    {showPageNav && (<aside class="page-nav" aria-label="On this page" data-page-nav data-heading-depth={heading_depth}>
+      <p class="page-nav__title">On This Page</p>
+      <nav data-page-nav-list>
+        {visible_headings.map((heading) => (
+          <a
+            class:list={['page-nav__link', heading.depth === 3 && 'page-nav__link--nested']}
+            href={`#${heading.slug}`}
+            data-page-nav-link={heading.slug}
+          >
+            {heading.text}
+          </a>
+        ))}
+      </nav>
+      <a class="page-nav__top" href="#top" data-page-nav-top>Scroll to top</a>
+    </aside>)}
+  </div>
+  <Footer name={props.site_name} socialLinks={social_links} />
+  <script>
+    const pageNav = document.querySelector('[data-page-nav]');
+    if (pageNav) {
+      const headingDepth = parseInt(pageNav.dataset.headingDepth ?? '3', 10);
+      const links = pageNav.querySelectorAll('[data-page-nav-link]');
+      const topLink = pageNav.querySelector('[data-page-nav-top]');
+
+      const slugs = Array.from(links).map((link) => link.dataset.pageNavLink);
+      const headings = slugs
+        .map((slug) => document.getElementById(slug))
+        .filter(Boolean);
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          let activeSlug = null;
+
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              activeSlug = entry.target.id;
+            }
+          }
+
+          // If no heading is currently intersecting, keep the last one that was above
+          // the viewport — but first, check if we scrolled past all headings
+          if (!activeSlug) {
+            const firstHeading = headings[0];
+            if (firstHeading && firstHeading.getBoundingClientRect().top > 0) {
+              // We're above the first heading — no active highlight
+              activeSlug = null;
+            } else {
+              // Pick the last heading that is above the viewport
+              for (const h of [...headings].reverse()) {
+                if (h.getBoundingClientRect().top < 100) {
+                  activeSlug = h.id;
+                  break;
+                }
+              }
+            }
+          }
+
+          links.forEach((link) => {
+            const isActive = link.dataset.pageNavLink === activeSlug;
+            link.classList.toggle('is-active', isActive);
+          });
+
+          // Show scroll-to-top when a heading is active or page is scrolled
+          const scrolled = window.scrollY > 300;
+          topLink?.classList.toggle('is-visible', scrolled);
+        },
+        {
+          rootMargin: '-88px 0px -66% 0px',
+        },
+      );
+
+      headings.forEach((h) => observer.observe(h));
+    }
+  </script>
+</BasePage>
+<style>
+  .page-shell {
+    position: relative;
+    z-index: 1;
+    width: min(100% - (var(--page-gutter) * 2), var(--content-width));
+    margin: 0 auto;
+  }
+
+  .page-shell--with-nav {
+    display: grid;
+    width: min(100% - (var(--page-gutter) * 2), var(--header-width));
+    grid-template-columns: minmax(0, var(--content-width)) 220px;
+    justify-content: center;
+    gap: 72px;
+  }
+
+  .site-main {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    padding: 48px 0 96px;
+  }
+
+  .page-nav {
+    position: sticky;
+    top: 92px;
+    align-self: start;
+    padding: 74px 0 0;
+    color: var(--text-muted);
+    font-size: 0.86rem;
+  }
+
+  .page-nav__title {
+    margin: 0 0 12px;
+    color: var(--text);
+    font-size: 0.78rem;
+    font-weight: 760;
+    line-height: 1.3;
+  }
+
+  .page-nav nav {
+    display: grid;
+    gap: 4px;
+    border-left: 1px solid var(--border);
+    padding-left: 14px;
+  }
+
+  .page-nav__link {
+    display: block;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--text-muted);
+    line-height: 1.45;
+    text-decoration: none;
+    transition:
+      background 150ms ease,
+      color 150ms ease;
+  }
+
+  .page-nav__link:hover {
+    background: rgba(34, 216, 204, 0.08);
+    color: var(--text);
+  }
+
+  .page-nav__link.is-active {
+    background: rgba(34, 216, 204, 0.1);
+    color: var(--accent);
+  }
+
+  .page-nav__link--nested {
+    padding-left: 20px;
+    font-size: 0.82rem;
+  }
+
+  .page-nav__top {
+    display: inline-flex;
+    margin-top: 18px;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    text-decoration: none;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease,
+      color 150ms ease,
+      background 150ms ease;
+  }
+
+  .page-nav__top:hover {
+    background: rgba(34, 216, 204, 0.08);
+    color: var(--text);
+  }
+
+  .page-nav__top.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .page-footer-note {
+    margin: 64px 0 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: right;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 760px) {
+    .site-main {
+      padding-top: 22px;
+    }
+
+    .page-shell,
+    .page-shell--with-nav {
+      display: block;
+      width: min(100% - (var(--page-gutter) * 2), var(--content-width));
+    }
+
+    .page-nav {
+      display: none;
+    }
+
+    .page-footer-note {
+      text-align: left;
+    }
+  }
+</style>

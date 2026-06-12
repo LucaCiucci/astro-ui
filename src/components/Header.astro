@@ -3,7 +3,7 @@ import { Icon } from 'astro-icon/components';
 import SupportMe from './SupportMe.astro';
 
 export interface Props {
-  name: string;
+  name?: string;
   items?: NavItem[];
 }
 
@@ -32,10 +32,12 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 
 <header class="site-header">
 	<div class="site-header__inner">
-		<a class="brand" href="/" aria-label={`${name} home`}>
-			<img class="brand__mark" src="/favicon.svg" alt="" />
-			<span class="brand__name">{name}</span>
-		</a>
+		{name && (
+			<a class="brand" href="/" aria-label={`${name} home`}>
+				<img class="brand__mark" src="/favicon.svg" alt="" />
+				<span class="brand__name">{name}</span>
+			</a>
+		)}
 
 		<nav class="main-nav" aria-label="Main navigation" data-main-nav>
 			{

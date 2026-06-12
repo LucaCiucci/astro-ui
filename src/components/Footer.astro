@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components';
 
 interface Props {
+  name?: string;
   socialLinks?: SocialLink[];
   lastUpdated?: string;
 }
@@ -12,15 +13,15 @@ export interface SocialLink {
   icon: string;
 }
 
-const { socialLinks = [], lastUpdated } = Astro.props as Props;
+const { name = '', socialLinks = [], lastUpdated } = Astro.props as Props;
 const currentYear = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
 	<div class="site-footer__inner">
 		<div class="footer-brand">
-			<a class="footer-brand__link" href="/" aria-label="Luca Ciucci home">
-				<span class="footer-brand__name">Luca Ciucci</span>
+			<a class="footer-brand__link" href="/" aria-label={`${name} home`}>
+				<span class="footer-brand__name">{name}</span>
 			</a>
 			<p class="footer-tagline">Software, science, and engineering projects</p>
 		</div>
@@ -40,7 +41,7 @@ const currentYear = new Date().getFullYear();
 		</nav>
 
 		<div class="footer-bottom">
-			<p class="footer-copyright">&copy; {currentYear} Luca Ciucci. All rights reserved.</p>
+			<p class="footer-copyright">&copy; {currentYear} {name}. All rights reserved.</p>
 			{lastUpdated && <p class="footer-updated">Last updated {lastUpdated}</p>}
 		</div>
 	</div>

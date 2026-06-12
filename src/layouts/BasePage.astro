@@ -1,0 +1,43 @@
+---
+import BaseHtmlPage, { type Props as BaseHtmlPageProps } from './BaseHtmlPage.astro';
+import MetaEx from '../components/MetaEx.astro';
+
+export interface Props extends BaseHtmlPageProps {
+  site_name?: string;
+  canonical_url?: string;
+  title?: string;
+  author?: string;
+  theme_color?: string;
+  meta?: PageMeta;
+}
+
+export interface PageMeta {
+  description?: string;
+  subject?: string;
+  keywords?: string[];
+  image?: string;
+  image_alt?: string;
+}
+
+const { lang, site_name, canonical_url, title, author, theme_color, meta = {} } = Astro.props as Props;
+---
+<BaseHtmlPage lang={lang}>
+  <Fragment slot="head">
+    <meta name="generator" content={Astro.generator} />
+    <MetaEx
+      title={title}
+      favicon="/favicon.ico"
+      icon="/favicon.svg"
+      description={meta.description}
+      siteName={site_name}
+      canonical_url={canonical_url}
+      author={author}
+      image={meta.image}
+      imageAlt={meta.image_alt}
+      themeColor={theme_color}
+      twitterCard="summary_large_image"
+    />
+    <slot name="head" />
+  </Fragment>
+  <slot />
+</BaseHtmlPage>

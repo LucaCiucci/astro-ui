@@ -1,0 +1,169 @@
+---
+/*
+Useful links:
+- Open Graph protocol: https://ogp.me/
+- Twitter Cards: https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/
+- Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/
+- Open Graph Check: https://opengraphexamples.com/open-graph-debugger/
+- Open Graph Validator: https://orcascan.com/tools/open-graph-validator
+- Open Graph Checker & Preview: https://www.opengraph.to/
+
+Finally, to test the real sharing, you will need to append a fake "version" query parameter to the URL (e.g. https://tmp-test.lucaciucci99.com/?v=3) to bypass caching on social platforms.
+*/
+
+interface Props {
+  /**
+   * Page title.
+   *
+   * Used for:
+   * - `<title>`
+   * - `og:title`
+   * - `twitter:title`
+   */
+  title?: string;
+  /** URL or path to .ico favicon (Google requires this) */
+  favicon?: string;
+  /** Different from favicon, used for other icon types */
+  icon?: string;
+  /** Page description for SEO and social previews */
+  description?: string;
+  /** Subject/category of the page (displayed as a Twitter meta) */
+  subject?: string;
+  /** Comma-separated keywords for SEO */
+  keywords?: string[];
+  /** Author name */
+  author?: string;
+  /** URL to the social sharing image */
+  image?: string;
+  /** Alt text for the social sharing image */
+  imageAlt?: string;
+  /** Width of the social sharing image in px (default: 1200) */
+  imageWidth?: number;
+  /** Height of the social sharing image in px (default: 630) */
+  imageHeight?: number;
+  /** Canonical URL of the page (e.g. "https://lucaciucci.com/about") */
+  canonical_url?: string;
+  /** Site name for og:site_name (e.g. "Luca Ciucci") */
+  siteName?: string;
+  /** Open Graph type: "website" (default) or "article" */
+  type?: string;
+  /** Locale (e.g. "en_US", "it_IT") */
+  locale?: string;
+  /** Twitter card type: "summary_large_image" (default) or "summary" */
+  twitterCard?: string;
+  /** Twitter @username for twitter:site */
+  twitterSite?: string;
+  /** Theme color for browser chrome on mobile */
+  themeColor?: string;
+}
+
+const {
+  title = "",
+  favicon,
+  icon,
+  description,
+  subject,
+  keywords,
+  author,
+  image,
+  imageAlt,
+  imageWidth = 1200,
+  imageHeight = 630,
+  canonical_url: url,
+  siteName,
+  type = "website",
+  locale,
+  twitterCard = "summary_large_image",
+  twitterSite,
+  themeColor,
+} = Astro.props;
+---
+
+{/* --- Title --- */}
+{title && <>
+  <title>{title}</title>
+  <meta property="og:title" content={title} />
+  <meta name="twitter:title" content={title} />
+</>}
+
+{/* --- Favicon --- */}
+{favicon && <link rel="icon" href={favicon} sizes="any" />}
+{favicon && <link rel="shortcut icon" href={favicon} />}
+{icon && icon.endsWith(".png") && <>
+  {/* TODO sizes="32x32" */}
+  <link rel="icon" type="image/png" href={icon} />
+  <link rel="apple-touch-icon" href={icon} />
+</>}
+{icon && icon.endsWith(".svg") && <>
+  <link rel="icon" type="image/svg+xml" href={icon} />
+  <link rel="apple-touch-icon" href={icon} />
+</>}
+
+{/* --- Description --- */}
+{description && <>
+  <meta name="description" content={description} />
+  <meta property="og:description" content={description} />
+  <meta name="twitter:description" content={description} />
+</>}
+
+{/* --- Canonical URL & Open Graph URL --- */}
+{url && <>
+  <link rel="canonical" href={url} />
+  <meta property="og:url" content={url} />
+</>}
+
+{/* --- Open Graph type --- */}
+<meta property="og:type" content={type} />
+
+{/* --- Twitter card type --- */}
+<meta name="twitter:card" content={twitterCard} />
+{twitterSite && <>
+  <meta name="twitter:site" content={twitterSite} />
+</>}
+
+{/* --- Site name --- */}
+{siteName && <>
+  <meta property="og:site_name" content={siteName} />
+</>}
+
+{/* --- Locale --- */}
+{locale && <>
+  <meta property="og:locale" content={locale} />
+</>}
+
+{/* --- Subject (Twitter context) --- */}
+{subject && <>
+  <meta name="twitter:label1" content="Subject" />
+  <meta name="twitter:data1" content={subject} />
+</>}
+
+{/* --- Keywords --- */}
+{keywords && <>
+  <meta name="keywords" content={keywords.join(", ")} />
+</>}
+
+{/* --- Author --- */}
+{author && <>
+  <meta name="author" content={author} />
+  <meta name="twitter:label2" content="Author" />
+  <meta name="twitter:data2" content={author} />
+</>}
+
+{/* --- Social image --- */}
+{image && <>
+  <meta property="og:image" content={image} />
+  <meta property="og:image:width" content={String(imageWidth)} />
+  <meta property="og:image:height" content={String(imageHeight)} />
+  <meta name="twitter:image" content={image} />
+</>}
+
+{/* --- Image alt text --- */}
+{imageAlt && <>
+  <meta property="og:image:alt" content={imageAlt} />
+  <meta name="twitter:image:alt" content={imageAlt} />
+</>}
+
+{/* --- Theme color (browser chrome) --- */}
+{themeColor && <>
+  <meta name="theme-color" content={themeColor} />
+</>}

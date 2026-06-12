@@ -11,6 +11,7 @@
     "./components": "./src/components/index.ts",
     "./components/hero_actions": "./src/components/hero_actions/index.ts",
     "./project": "./src/components/project/index.ts",
+    "./layouts": "./src/layouts/index.ts",
     "./styles/global.css": "./src/styles/global.css"
   },
   "peerDependencies": {
