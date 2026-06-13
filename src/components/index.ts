@@ -6,7 +6,6 @@ export { default as Hero } from "./Hero.astro";
 export { default as Md } from "./Md.astro";
 export { default as PageIntro } from "./PageIntro.astro";
 export {
-  ProjectArticle,
   ProjectCard,
   ProjectGrid,
   SlideViewer,

@@ -12,7 +12,8 @@
     "./components/hero_actions": "./src/components/hero_actions/index.ts",
     "./project": "./src/components/project/index.ts",
     "./layouts": "./src/layouts/index.ts",
-    "./styles/global.css": "./src/styles/global.css"
+    "./styles/global.css": "./src/styles/global.css",
+    "./utils": "./src/utils/index.ts"
   },
   "peerDependencies": {
     "astro": "^5.0.0",

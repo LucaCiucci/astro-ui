@@ -55,6 +55,12 @@ interface Props {
   twitterSite?: string;
   /** Theme color for browser chrome on mobile */
   themeColor?: string;
+  /** Publication date (ISO 8601), used for article:published_time */
+  date?: string;
+  /** Last modified date (ISO 8601), used for article:modified_time */
+  modifiedDate?: string;
+  /** URL to the sitemap (e.g. "/sitemap-index.xml") */
+  sitemap?: string;
 }
 
 const {
@@ -76,6 +82,9 @@ const {
   twitterCard = "summary_large_image",
   twitterSite,
   themeColor,
+  date,
+  modifiedDate,
+  sitemap,
 } = Astro.props;
 ---
 
@@ -167,3 +176,19 @@ const {
 {themeColor && <>
   <meta name="theme-color" content={themeColor} />
 </>}
+
+{/* --- Publication / Modified date (for article type) --- */}
+{date && <>
+  <meta property="article:published_time" content={date} />
+  <meta name="date" content={date} />
+</>}
+{modifiedDate && <>
+  <meta property="article:modified_time" content={modifiedDate} />
+</>}
+
+
+{/* --- Sitemap --- */}
+{sitemap && <>
+  <link rel="sitemap" type="application/xml" href={sitemap} />
+  <meta name="robots" content="index, follow" />
+</> }

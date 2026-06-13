@@ -1,6 +1,7 @@
 ---
 import { Header, Footer, type NavItem, type SocialLink } from "../components";
 import BasePage, { type Props as BasePageProps } from "./BasePage.astro";
+import { getLastModifiedFormatted } from "../utils";
 import "../../styles/global.css";
 
 interface Props extends BasePageProps {
@@ -24,6 +25,8 @@ const showPageNav = show_page_nav || visible_headings.length > 1;
 
 const pagefind_stylesheet = '/pagefind/pagefind-component-ui.css';
 const pagefind_script = '/pagefind/pagefind-component-ui.js';
+
+const last_modified = getLastModifiedFormatted(Astro.url.pathname);
 ---
 <BasePage {...props}>
   <Fragment slot="head">
@@ -52,7 +55,7 @@ const pagefind_script = '/pagefind/pagefind-component-ui.js';
       <a class="page-nav__top" href="#top" data-page-nav-top>Scroll to top</a>
     </aside>)}
   </div>
-  <Footer name={props.site_name} socialLinks={social_links} />
+  <Footer name={props.site_name} socialLinks={social_links} lastUpdated={last_modified} />
   <script>
     const pageNav = document.querySelector('[data-page-nav]');
     if (pageNav) {
