@@ -1,4 +1,5 @@
 
+export { default as Callout } from "./Callout.astro";
 export { default as DelaunayBackground } from "./DelaunayBackground.astro";
 export { default as Footer, type SocialLink } from "./Footer.astro";
 export { default as Header, type Props as HeaderProps, type NavItem } from "./Header.astro";

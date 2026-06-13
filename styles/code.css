@@ -1,0 +1,47 @@
+
+:root {
+  --code-bg: var(--background-raised);
+  --code-inline-bg: rgba(72, 152, 255, 0.09);
+  --code-block-border: var(--border);
+}
+
+.site-main code {
+  background: var(--code-inline-bg);
+  padding: 0.1em 0.2em;
+  border-radius: 5px;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  font-size: 0.84em;
+  letter-spacing: -0.01em;
+}
+
+.site-main pre {
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--code-block-border);
+  line-height: 1.2;
+  font-size: 0.88rem;
+}
+
+.site-main pre code {
+  background: none;
+  tab-size: 2;
+}
+
+.site-main pre::-webkit-scrollbar {
+	height: 6px;
+}
+
+.site-main pre::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.site-main pre::-webkit-scrollbar-thumb {
+	background: rgba(120, 168, 255, 0.15);
+	border-radius: 3px;
+}
+
+.site-main pre::-webkit-scrollbar-thumb:hover {
+	background: rgba(120, 168, 255, 0.25);
+}

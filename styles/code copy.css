@@ -1,0 +1,75 @@
+
+:root {
+
+	/* ───────── Code tokens ───────── */
+	--code-bg: #0b101f;
+	--code-text: #e3e9f7;
+	--code-inline-bg: rgba(72, 152, 255, 0.09);
+	--code-inline-text: #b6d4ff;
+	--code-block-border: rgba(72, 152, 255, 0.08);
+}
+
+/* ═══════════════════════════════════════════
+   Inline code
+   ═══════════════════════════════════════════ */
+
+.site-main code {
+	background: var(--code-inline-bg);
+	color: var(--code-inline-text);
+	padding: 0.18em 0.45em;
+	border-radius: 5px;
+	font-size: 0.84em;
+	font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+	font-weight: 470;
+	letter-spacing: -0.01em;
+}
+
+/* ═══════════════════════════════════════════
+   Code blocks
+   ═══════════════════════════════════════════ */
+
+.site-main pre {
+	background: var(--code-bg);
+	border: 1px solid var(--code-block-border);
+	border-radius: 10px;
+	padding: 1rem 1.15rem;
+	margin: 1.25em 0;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	line-height: 1.6;
+	font-size: 0.88rem;
+	box-shadow:
+		0 0 0 1px rgba(72, 152, 255, 0.03),
+		inset 0 0 60px rgba(72, 152, 255, 0.02);
+}
+
+.site-main pre code {
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	color: var(--code-text);
+	font-size: inherit;
+	font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+	line-height: inherit;
+	tab-size: 2;
+}
+
+/* ───────── Scrollbar for code blocks ───────── */
+
+.site-main pre::-webkit-scrollbar {
+	height: 6px;
+}
+
+.site-main pre::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.site-main pre::-webkit-scrollbar-thumb {
+	background: rgba(120, 168, 255, 0.15);
+	border-radius: 3px;
+}
+
+.site-main pre::-webkit-scrollbar-thumb:hover {
+	background: rgba(120, 168, 255, 0.25);
+}

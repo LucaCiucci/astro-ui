@@ -1,0 +1,93 @@
+---
+export interface Props {
+  variant?: 'note' | 'warning' | 'tip' | 'info';
+  title?: string;
+}
+
+const { variant = 'note', title } = Astro.props as Props;
+
+const variantTitles: Record<string, string> = {
+  note: 'Note',
+  warning: 'Warning',
+  tip: 'Tip',
+  info: 'Info',
+};
+
+const displayTitle = title ?? variantTitles[variant] ?? 'Note';
+---
+<div class="callout" data-variant={variant}>
+  <span class="callout-title">{displayTitle}</span>
+  <div class="callout-body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .callout {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 1.5rem 0;
+    border-radius: 10px;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--border);
+    background: var(--background-raised);
+  }
+
+  .callout[data-variant="note"] {
+    border-color: rgba(34, 216, 204, 0.25);
+    background: rgba(34, 216, 204, 0.04);
+  }
+
+  .callout[data-variant="warning"] {
+    border-color: rgba(255, 216, 61, 0.25);
+    background: rgba(255, 216, 61, 0.04);
+  }
+
+  .callout[data-variant="tip"] {
+    border-color: rgba(189, 245, 140, 0.25);
+    background: rgba(189, 245, 140, 0.04);
+  }
+
+  .callout[data-variant="info"] {
+    border-color: rgba(21, 152, 255, 0.25);
+    background: rgba(21, 152, 255, 0.04);
+  }
+
+  .callout-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .callout[data-variant="note"] .callout-title {
+    color: var(--accent);
+  }
+
+  .callout[data-variant="warning"] .callout-title {
+    color: var(--warning);
+  }
+
+  .callout[data-variant="tip"] .callout-title {
+    color: var(--accent-green);
+  }
+
+  .callout[data-variant="info"] .callout-title {
+    color: var(--accent-blue);
+  }
+
+  .callout-body {
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .callout-body :global(p) {
+    margin: 0;
+  }
+
+  .callout-body :global(p + p) {
+    margin-top: 0.6rem;
+  }
+</style>
