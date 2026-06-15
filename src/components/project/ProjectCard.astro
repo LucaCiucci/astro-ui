@@ -7,6 +7,8 @@ interface Props {
   meta?: string;
   tags?: string[];
   status?: 'complete' | 'archive' | 'external';
+  image?: string;
+  imageAlt?: string;
 }
 
 const {
@@ -16,34 +18,39 @@ const {
   meta,
   tags = [],
   status = 'complete',
+  image,
+  imageAlt = '',
 } = Astro.props;
 ---
 
 <article class="card">
-  <div class="topline">
-    {meta && <span>{meta}</span>}
-    <span class="status">{status}</span>
+  {image && <img src={image} alt={imageAlt} class="card-image" />}
+  <div class="card-body">
+    <div class="topline">
+      {meta && <span>{meta}</span>}
+      <span class="status">{status}</span>
+    </div>
+    <h2>{href ? <a href={href}><Md kind="inline" text={title} /></a> : <Md kind="inline" text={title} />}</h2>
+    {description && <Md kind="block" text={description} />}
+    {tags.length > 0 && <ul>{tags.map(tag => <li>{tag}</li>)}</ul>}
+    {href && <a class="open" href={href}>Open project <span aria-hidden="true">↗</span></a>}
   </div>
-  <h2>{href ? <a href={href}><Md kind="inline" text={title} /></a> : <Md kind="inline" text={title} />}</h2>
-  {description && <Md kind="block" text={description} />}
-  {tags.length > 0 && <ul>{tags.map(tag => <li>{tag}</li>)}</ul>}
-  {href && <a class="open" href={href}>Open project <span aria-hidden="true">↗</span></a>}
 </article>
 
 <style>
   .card {
     position: relative;
-    display: flex;
-    min-height: 15rem;
-    flex-direction: column;
     overflow: hidden;
     border: 1px solid var(--border);
     border-left: 2px solid var(--accent);
     border-radius: 0 12px 12px 0;
-    padding: 1.2rem;
     background:
       linear-gradient(120deg, var(--hover-accent-subtle), transparent 55%),
       var(--background-raised);
+  }
+
+  .card-body {
+    padding: 1.2rem;
   }
 
   .topline {
@@ -55,6 +62,17 @@ const {
     font-size: 0.66rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  .card-image {
+    float: right;
+    width: auto;
+    max-width: 8rem;
+    max-height: 6rem;
+    object-fit: contain;
+    border-radius: 6px;
+    margin: 0.8rem 0.8rem 0.4rem 0.8rem;
+    border: 1px solid var(--border);
   }
 
   .status {
@@ -86,10 +104,11 @@ const {
   ul {
     display: flex;
     flex-wrap: wrap;
-    margin: auto 0 0;
+    margin: 0;
     padding: 1.2rem 0 0;
     gap: 0.35rem;
     list-style: none;
+    clear: both;
   }
 
   li {
