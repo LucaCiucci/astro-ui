@@ -63,6 +63,23 @@ interface Props {
   sitemap?: string;
 }
 
+function randomHex(len: number): string {
+  return Array.from({ length: len }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+}
+
+/** Resolves template variables in a string. Supported variables:
+ * - `{random_hash}` — random hex string (default 8 chars)
+ * - `{random_hash:N}` — random hex string of length N
+ */
+function resolveTemplateVars(s: string): string {
+  return s.replace(/\{random_hash(?::(\d+))?\}/g, (_, len) => randomHex(len ? parseInt(len) : 8));
+}
+
+function resolveImage(img: string | undefined): string | undefined {
+  if (!img) return undefined;
+  return resolveTemplateVars(img);
+}
+
 const {
   title = "",
   favicon,
@@ -71,7 +88,7 @@ const {
   subject,
   keywords,
   author,
-  image,
+  image: _image,
   imageAlt,
   imageWidth,
   imageHeight,
@@ -86,6 +103,8 @@ const {
   modifiedDate,
   sitemap,
 } = Astro.props;
+
+const image = resolveImage(_image);
 ---
 
 {/* --- Title --- */}

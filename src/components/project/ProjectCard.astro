@@ -1,7 +1,8 @@
 ---
+import Md from '../Md.astro';
 interface Props {
   title: string;
-  description: string;
+  description?: string;
   href?: string;
   meta?: string;
   tags?: string[];
@@ -23,8 +24,8 @@ const {
     {meta && <span>{meta}</span>}
     <span class="status">{status}</span>
   </div>
-  <h2>{href ? <a href={href}>{title}</a> : title}</h2>
-  <p>{description}</p>
+  <h2>{href ? <a href={href}><Md kind="inline" text={title} /></a> : <Md kind="inline" text={title} />}</h2>
+  {description && <Md kind="block" text={description} />}
   {tags.length > 0 && <ul>{tags.map(tag => <li>{tag}</li>)}</ul>}
   {href && <a class="open" href={href}>Open project <span aria-hidden="true">↗</span></a>}
 </article>
