@@ -8,6 +8,11 @@ const { href, role = "normal" } = Astro.props as Props;
 const className = `hero-button ${role === "primary" ? "hero-button--primary" : ""}`;
 ---
 
-<a class={className} href={href}>
+<a
+  class={className}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+>
   <slot />
 </a>
