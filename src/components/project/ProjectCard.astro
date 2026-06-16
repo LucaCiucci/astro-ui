@@ -24,7 +24,7 @@ const {
 ---
 
 <article class="card">
-  {image && <img src={image} alt={imageAlt} class="card-image" />}
+  {image && <a href={href}><img src={image} alt={imageAlt} class="card-image" /></a>}
   <div class="card-body">
     <div class="topline">
       {meta && <span>{meta}</span>}
