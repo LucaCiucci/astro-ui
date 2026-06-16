@@ -1,21 +1,24 @@
 ---
 export interface Props {
-  variant?: 'note' | 'warning' | 'tip' | 'info';
+  variant?: 'note' | 'warning' | 'tip' | 'info' | 'tldr' | 'important';
   title?: string;
+  id?: string;
 }
 
-const { variant = 'note', title } = Astro.props as Props;
+const { variant = 'note', title, id } = Astro.props as Props;
 
 const variantTitles: Record<string, string> = {
   note: 'Note',
   warning: 'Warning',
   tip: 'Tip',
   info: 'Info',
+  tldr: 'TL;DR',
+  important: 'Important',
 };
 
 const displayTitle = title ?? variantTitles[variant] ?? 'Note';
 ---
-<div class="callout" data-variant={variant}>
+<div class="callout" data-variant={variant} id={id}>
   <span class="callout-title">{displayTitle}</span>
   <div class="callout-body">
     <slot />
@@ -54,6 +57,16 @@ const displayTitle = title ?? variantTitles[variant] ?? 'Note';
     background: rgba(21, 152, 255, 0.04);
   }
 
+  .callout[data-variant="tldr"] {
+    border-color: rgba(136, 153, 170, 0.25);
+    background: rgba(136, 153, 170, 0.04);
+  }
+
+  .callout[data-variant="important"] {
+    border-color: rgba(168, 85, 247, 0.3);
+    background: rgba(168, 85, 247, 0.05);
+  }
+
   .callout-title {
     font-size: 0.72rem;
     font-weight: 800;
@@ -75,6 +88,14 @@ const displayTitle = title ?? variantTitles[variant] ?? 'Note';
 
   .callout[data-variant="info"] .callout-title {
     color: var(--accent-blue);
+  }
+
+  .callout[data-variant="tldr"] .callout-title {
+    color: #8899aa;
+  }
+
+  .callout[data-variant="important"] .callout-title {
+    color: #a855f7;
   }
 
   .callout-body {

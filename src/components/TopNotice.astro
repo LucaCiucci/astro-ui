@@ -1,0 +1,25 @@
+---
+export interface Props {
+  kind?: 'orange' | '';
+}
+
+const { kind = '' } = Astro.props as Props;
+---
+
+<div class={`top-notice ${kind}`}><slot /></div>
+
+<style>
+  .top-notice {
+    --rgb: 128, 128, 128;
+
+    border-top: solid 1px rgba(var(--rgb), 0.25);
+    border-bottom: solid 1px rgba(var(--rgb), 0.25);
+    background: rgba(var(--rgb), 0.08);
+    text-align: center;
+    padding: 0.25em;
+  }
+
+  .top-notice.orange {
+    --rgb: 255, 165, 0;
+  }
+</style>
