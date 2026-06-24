@@ -1,0 +1,203 @@
+---
+/*
+  Starfield — programmatically generated animated background stars.
+
+  Each layer is defined by a simple config object. The individual star
+  positions, sizes and opacities are seeded-random so they're stable
+  across builds but different from the old hardcoded set.
+
+  To add a new layer, just append another config entry below.
+*/
+
+interface LayerConfig {
+  label: string;
+  count: number;
+  rMin: number;
+  rMax: number;
+  opacityMin: number;
+  opacityMax: number;
+  color: string;         // "r,g,b" — alpha is randomised per star
+  animation: string;     // CSS class suffix
+  delay: number;         // animation-delay in seconds
+}
+
+const layers: LayerConfig[] = [
+  {
+    label: 'Dense tiny white, fast twinkle',
+    count: 1000,
+    rMin: 0.3, rMax: 0.6,
+    opacityMin: 0.25, opacityMax: 0.75,
+    color: '255,255,255',
+    animation: 'fast',
+    delay: 0,
+  },
+  {
+    label: 'Dense tiny white, fast twinkle',
+    count: 1000,
+    rMin: 0.3, rMax: 0.6,
+    opacityMin: 0.25, opacityMax: 0.75,
+    color: '255,255,255',
+    animation: 'fast',
+    delay: 0.25,
+  },
+  {
+    label: 'Dense tiny white, fast twinkle',
+    count: 1000,
+    rMin: 0.3, rMax: 0.6,
+    opacityMin: 0.25, opacityMax: 0.75,
+    color: '255,255,255',
+    animation: 'fast',
+    delay: 0.5,
+  },
+  {
+    label: 'Dense tiny white, fast twinkle',
+    count: 1000,
+    rMin: 0.3, rMax: 0.6,
+    opacityMin: 0.25, opacityMax: 0.75,
+    color: '255,255,255',
+    animation: 'fast',
+    delay: 0.75,
+  },
+  {
+    label: 'Dense tiny white, fast twinkle',
+    count: 1000,
+    rMin: 0.3, rMax: 0.6,
+    opacityMin: 0.25, opacityMax: 0.75,
+    color: '255,255,255',
+    animation: 'fast',
+    delay: 1.0,
+  },
+  {
+    label: 'Medium white, slow twinkle',
+    count: 40,
+    rMin: 0.8, rMax: 1.3,
+    opacityMin: 0.12, opacityMax: 0.35,
+    color: '255,255,255',
+    animation: 'slow',
+    delay: 1.8,
+  },
+  {
+    label: 'Warm-hued sparse, gentle pulse',
+    count: 18,
+    rMin: 1.0, rMax: 1.6,
+    opacityMin: 0.1, opacityMax: 0.25,
+    color: '255,200,150',
+    animation: 'pulse',
+    delay: 0.6,
+  },
+  {
+    label: 'Bright bluish highlights, slow twinkle',
+    count: 10,
+    rMin: 1.6, rMax: 2.4,
+    opacityMin: 0.15, opacityMax: 0.3,
+    color: '200,230,255',
+    animation: 'slow',
+    delay: 3.2,
+  },
+];
+
+// ── Seeded PRNG (Lehmer / Park-Miller) ─────────────────────────────────
+// Ensures the same starfield is generated every build without a seed file.
+function createRng(seed: number) {
+  let s = seed | 0;
+  return () => {
+    s = (s * 16807) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+
+const W = 1200;
+const H = 1200;
+
+interface Star {
+  cx: number;
+  cy: number;
+  r: number;
+  opacity: number;
+}
+
+function generateStars(cfg: LayerConfig, seed: number): Star[] {
+  const rng = createRng(seed);
+  const stars: Star[] = [];
+  for (let i = 0; i < cfg.count; i++) {
+    stars.push({
+      cx: Math.round(rng() * W * 10) / 10,
+      cy: Math.round(rng() * H * 10) / 10,
+      r: Math.round((cfg.rMin + rng() * (cfg.rMax - cfg.rMin)) * 10) / 10,
+      opacity: Math.round((cfg.opacityMin + rng() * (cfg.opacityMax - cfg.opacityMin)) * 100) / 100,
+    });
+  }
+  return stars;
+}
+
+const generated = layers.map((cfg, i) => ({
+  cfg,
+  stars: generateStars(cfg, 42 + i * 7),
+}));
+---
+
+<svg
+  class="starfield"
+  viewBox="0 0 1200 1200"
+  preserveAspectRatio="xMidYMid slice"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+>
+  {generated.map(({ cfg, stars }, layerIdx) => (
+    <g class={`starfield-layer starfield-layer--${layerIdx + 1}`}>
+      {stars.map((s) => (
+        <circle cx={s.cx} cy={s.cy} r={s.r} fill={`rgba(${cfg.color},${s.opacity})`} />
+      ))}
+    </g>
+  ))}
+</svg>
+
+<style>
+  .starfield {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .starfield-layer {
+    opacity: 0;
+  }
+
+  .starfield-layer--1 {
+    animation: starfield-twinkle 1s ease-in-out infinite;
+  }
+
+  .starfield-layer--2 {
+    animation: starfield-twinkle-slow 5.4s ease-in-out infinite;
+    animation-delay: 1.8s;
+  }
+
+  .starfield-layer--3 {
+    animation: starfield-pulse 8s ease-in-out infinite;
+    animation-delay: 0.6s;
+  }
+
+  .starfield-layer--4 {
+    animation: starfield-twinkle-slow 7s ease-in-out infinite;
+    animation-delay: 3.2s;
+  }
+
+  @keyframes starfield-twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+
+  @keyframes starfield-twinkle-slow {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 0.1; }
+  }
+
+  @keyframes starfield-pulse {
+    0%, 100% { opacity: 0.7; }
+    33% { opacity: 0.15; }
+    66% { opacity: 0.5; }
+  }
+</style>

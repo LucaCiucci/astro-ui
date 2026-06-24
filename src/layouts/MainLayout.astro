@@ -1,6 +1,7 @@
 ---
 import { Header, Footer, TopNotice, type NavItem, type SocialLink } from "../components";
 import BasePage, { type Props as BasePageProps } from "./BasePage.astro";
+import Starfield from "../components/Starfield.astro";
 import { getLastModifiedFormatted } from "../utils";
 import "../../styles/global.css";
 import "../../styles/code.css";
@@ -36,6 +37,7 @@ const last_modified = getLastModifiedFormatted(Astro.url.pathname);
     <script src={pagefind_script} defer></script>
   </Fragment>
 
+  <Starfield />
   <Header name={props.site_name} items={nav_items} />
   {top_notice && <TopNotice kind={top_notice.kind ?? 'orange'}>{top_notice.text}</TopNotice>}
   <div id="top" class:list={['page-shell', showPageNav && 'page-shell--with-nav']}>

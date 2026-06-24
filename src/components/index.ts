@@ -15,3 +15,4 @@ export { default as SupportMe } from "./SupportMe.astro";
 export { default as Timeline, type TimelineEntry } from "./Timeline.astro";
 export { default as TopNotice } from "./TopNotice.astro";
 export { default as MetaEx } from "./MetaEx.astro";
+export { default as Starfield } from "./Starfield.astro";
