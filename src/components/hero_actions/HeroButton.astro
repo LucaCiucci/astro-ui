@@ -2,8 +2,10 @@
 interface Props {
   href: string;
   role?: "normal" | "primary";
+  /** Whether to open the link in a new tab. Defaults to true for backward compatibility. */
+  newTab?: boolean;
 }
-const { href, role = "normal" } = Astro.props as Props;
+const { href, role = "normal", newTab = false } = Astro.props as Props;
 
 const className = `hero-button ${role === "primary" ? "hero-button--primary" : ""}`;
 ---
@@ -11,8 +13,8 @@ const className = `hero-button ${role === "primary" ? "hero-button--primary" : "
 <a
   class={className}
   href={href}
-  target="_blank"
-  rel="noopener noreferrer"
+  target={newTab ? "_blank" : undefined}
+  rel={newTab ? "noopener noreferrer" : undefined}
 >
   <slot />
 </a>
