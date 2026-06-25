@@ -1,6 +1,7 @@
 ---
 import BaseHtmlPage, { type Props as BaseHtmlPageProps } from './BaseHtmlPage.astro';
 import MetaEx from '../components/MetaEx.astro';
+import Gtag from '../components/Gtag.astro';
 import { getLastModifiedDate } from '../utils/last-modified';
 export interface Props extends BaseHtmlPageProps {
   site_name?: string;
@@ -10,6 +11,7 @@ export interface Props extends BaseHtmlPageProps {
   theme_color?: string;
   sitemap?: string;
   meta?: PageMeta;
+  gtag_id?: string;
 }
 
 export interface PageMeta {
@@ -22,7 +24,7 @@ export interface PageMeta {
   modified_date?: string;
 }
 
-const { lang, site_name, canonical_url, title, author, theme_color, sitemap, meta = {} } = Astro.props as Props;
+const { lang, site_name, canonical_url, title, author, theme_color, sitemap, meta = {}, gtag_id } = Astro.props as Props;
 
 const git_last_modified = getLastModifiedDate(Astro.url.pathname).toISOString().split('T')[0];
 meta.modified_date = meta.modified_date ?? git_last_modified;
@@ -47,6 +49,7 @@ meta.modified_date = meta.modified_date ?? git_last_modified;
       modifiedDate={meta.modified_date}
       sitemap={sitemap}
     />
+    {gtag_id && <Gtag id={gtag_id} />}
     <slot name="head" />
   </Fragment>
   <slot />
