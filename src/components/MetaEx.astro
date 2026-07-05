@@ -11,6 +11,8 @@ Useful links:
 Finally, to test the real sharing, you will need to append a fake "version" query parameter to the URL (e.g. https://tmp-test.lucaciucci99.com/?v=3) to bypass caching on social platforms.
 */
 
+import { rasterizeOgImage } from '../utils/rasterize';
+
 interface Props {
   /**
    * Page title.
@@ -104,7 +106,10 @@ const {
   sitemap,
 } = Astro.props;
 
-const image = resolveImage(_image);
+const image_1 = resolveImage(_image);
+// Rasterize SVGs to PNG (social platforms don't support SVG preview images)
+// For non-SVG images the path passes through unchanged.
+const image = image_1 ? await rasterizeOgImage(image_1) : undefined;
 ---
 
 {/* --- Title --- */}
