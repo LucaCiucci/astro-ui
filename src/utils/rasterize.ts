@@ -16,9 +16,11 @@ async function getSharp(): Promise<SharpFn> {
 /**
  * Converts an SVG image at the given URL path to a PNG using Sharp.
  *
- * The PNG is saved to `public/og/` (mirroring the original path structure).
- * This directory is gitignored via `/public/og/` in `.gitignore`.
- * If the PNG already exists and is newer than the SVG, it skips the conversion.
+ * The PNG is written to both `public/og/` (served by Vite dev server)
+ * and `dist/og/` (build output — `public/` is copied to `dist/` before
+ * components render, so a direct write to `dist/` is needed).
+ * Both directories are gitignored.
+ * If the PNG already exists and is newer than the SVG, it skips conversion.
  * If the image is not an SVG, the original path is returned unchanged.
  *
  * @param src - URL path to the image (e.g. `"/projects/foo/image.svg"`)
@@ -36,21 +38,18 @@ export async function rasterizeOgImage(
 	const svgPath = resolve(projectRoot, 'public', src.replace(/^\//, ''));
 	const relPngPath = src.replace(/^\//, '').replace(/\.svg$/, '.png');
 	const pngUrl = `/og/${relPngPath}`;
-	const pngPath = resolve(projectRoot, 'public', pngUrl.replace(/^\//, ''));
+	const pngPathPublic = resolve(projectRoot, 'public', pngUrl.replace(/^\//, ''));
+	const pngPathDist = resolve(projectRoot, 'dist', pngUrl.replace(/^\//, ''));
 
-	// Check if PNG already exists and is up-to-date
+	// Check if PNG already exists and is up-to-date (check either location)
 	try {
 		const svgStat = await stat(svgPath);
-		try {
-			const pngStat = await stat(pngPath);
-			if (pngStat.mtimeMs >= svgStat.mtimeMs) {
-				return pngUrl; // PNG is already up-to-date
-			}
-		} catch {
-			// PNG doesn't exist yet — will create it below
+		const cachedPath = await stat(pngPathPublic).catch(() => stat(pngPathDist).catch(() => null));
+		if (cachedPath && cachedPath.mtimeMs >= svgStat.mtimeMs) {
+			return pngUrl; // PNG is already up-to-date
 		}
 	} catch {
-		// SVG doesn't exist either — return original src
+		// SVG doesn't exist — return original src
 		return src;
 	}
 
@@ -59,9 +58,13 @@ export async function rasterizeOgImage(
 	const svgBuffer = await readFile(svgPath);
 	const pngBuffer = await sharp(svgBuffer).png().toBuffer();
 
-	// Ensure output directory exists
-	await mkdir(dirname(pngPath), { recursive: true });
-	await writeFile(pngPath, pngBuffer);
+	// Write to public/ (served by Vite dev server)
+	await mkdir(dirname(pngPathPublic), { recursive: true });
+	await writeFile(pngPathPublic, pngBuffer);
+
+	// Also write to dist/ (build output — public/ is copied before components render)
+	await mkdir(dirname(pngPathDist), { recursive: true });
+	await writeFile(pngPathDist, pngBuffer);
 
 	console.log(`[rasterize] Converted ${src} → ${pngUrl}`);
 
