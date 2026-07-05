@@ -10,7 +10,7 @@ const { basePath, count, title, zero_pad = 0 } = Astro.props;
 ---
 
 <section class="viewer" data-slide-viewer data-base-path={basePath} data-count={count} data-zero-pad={zero_pad}>
-  <img src={`${basePath}/1.svg`} alt={`${title}, slide 1`} data-slide />
+  <img src={`${basePath}/${String(1).padStart(zero_pad, '0')}.svg`} alt={`${title}, slide 1`} data-slide />
   <div class="controls">
     <button type="button" data-previous>← Previous</button>
     <span><strong data-current>1</strong> / {count}</span>
