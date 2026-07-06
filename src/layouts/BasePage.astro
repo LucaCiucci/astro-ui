@@ -11,6 +11,7 @@ export interface Props extends BaseHtmlPageProps {
   sitemap?: string;
   meta?: PageMeta;
   umami?: {
+    enabled?: boolean;
     server: string;
     website_id: string;
   };
@@ -51,7 +52,7 @@ meta.modified_date = meta.modified_date ?? git_last_modified;
       modifiedDate={meta.modified_date}
       sitemap={sitemap}
     />
-    {umami && <script async defer src={`https://${umami.server}/script.js`} data-website-id={umami.website_id}></script>}
+    {umami && (umami.enabled === undefined ? true : umami.enabled) && <script async defer src={`https://${umami.server}/script.js`} data-website-id={umami.website_id}></script>}
     <slot name="head" />
   </Fragment>
   <slot />
