@@ -25,6 +25,8 @@ export interface PageMeta {
   image_alt?: string;
   date?: string;
   modified_date?: string;
+  /** Open Graph type: "website" (default) or "article" */
+  type?: string;
 }
 
 const { lang, site_name, canonical_url, title, author, theme_color, sitemap, meta = {}, umami } = Astro.props as Props;
@@ -51,6 +53,7 @@ meta.modified_date = meta.modified_date ?? git_last_modified;
       date={meta.date}
       modifiedDate={meta.modified_date}
       sitemap={sitemap}
+      type={meta.type}
     />
     {umami && (umami.enabled === undefined ? true : umami.enabled) && <script async defer src={`https://${umami.server}/script.js`} data-website-id={umami.website_id}></script>}
     <slot name="head" />
