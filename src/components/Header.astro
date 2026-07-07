@@ -5,6 +5,7 @@ import SupportMe from './SupportMe.astro';
 export interface Props {
   name?: string;
   items?: NavItem[];
+  showSupportMe?: boolean;
 }
 
 const pathname = Astro.url.pathname;
@@ -23,7 +24,7 @@ export interface NavItem {
   children?: NavItem[];
 }
 
-const { name, items: navItems = [] } = Astro.props as Props;
+const { name, items: navItems = [], showSupportMe = false } = Astro.props as Props;
 
 // Items that are "secondary" — hidden from the main nav row at medium widths
 // and moved into the "More" dropdown instead
@@ -83,7 +84,7 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 					<kbd>CTRL K</kbd>
 				</button>
 			</pagefind-modal-trigger>
-			<SupportMe />
+			{showSupportMe && <SupportMe />}
 		</div>
 
 		{/* Burger button — visible on mobile */}
@@ -127,7 +128,7 @@ const moreItems = navItems.filter((_, i) => i >= 3);
 				</pagefind-modal-trigger>
 			</div>
 
-			<SupportMe />
+			{showSupportMe && <SupportMe />}
 		</div>
 	</div>
 

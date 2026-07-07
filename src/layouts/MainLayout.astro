@@ -9,6 +9,7 @@ interface Props extends BasePageProps {
   headings?: PageHeading[];
 	heading_depth?: 1 | 2 | 3;
   show_page_nav?: boolean;
+  show_support_me?: boolean;
   nav_items?: NavItem[];
   social_links?: SocialLink[];
   top_notice?: { text: string; kind?: 'orange' };
@@ -21,7 +22,7 @@ interface PageHeading {
 }
 
 const props = Astro.props as Props;
-const { headings = [], heading_depth = 3, show_page_nav = false, nav_items = [], social_links = [], top_notice } = props;
+const { headings = [], heading_depth = 3, show_page_nav = false, show_support_me = false, nav_items = [], social_links = [], top_notice } = props;
 const visible_headings = headings.filter((heading) => (heading.depth ?? 2) <= heading_depth);
 const showPageNav = show_page_nav || visible_headings.length > 1;
 
@@ -36,7 +37,7 @@ const last_modified = getLastModifiedFormatted(Astro.url.pathname);
     <script src={pagefind_script} defer></script>
   </Fragment>
 
-  <Header name={props.site_name} items={nav_items} />
+  <Header name={props.site_name} items={nav_items} showSupportMe={show_support_me} />
   {top_notice && <TopNotice kind={top_notice.kind ?? 'orange'}>{top_notice.text}</TopNotice>}
   <div id="top" class:list={['page-shell', showPageNav && 'page-shell--with-nav']}>
     <main class="site-main" data-pagefind-body>
