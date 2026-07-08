@@ -189,7 +189,8 @@ h6:hover .heading-anchor::before {
 
 
 /* Make details look nicer */
-.site-main details {
+.site-main details,
+.details-box {
   background: var(--background-raised);
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -251,4 +252,8 @@ h6:target {
 /* sequence of <sup> elements need to be separated by a small gap, otherwise they look like a single superscript */
 .site-main sup + sup {
   margin-left: 0.125em;
+}
+
+.muted {
+  color: var(--text-muted);
 }
