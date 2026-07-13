@@ -35,6 +35,7 @@ const last_modified = getLastModifiedFormatted(Astro.url.pathname);
   <Fragment slot="head">
     <link rel="stylesheet" href={pagefind_stylesheet} />
     <script src={pagefind_script} defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
   </Fragment>
 
   <Header name={props.site_name} items={nav_items} showSupportMe={show_support_me} />

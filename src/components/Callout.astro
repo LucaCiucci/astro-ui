@@ -14,6 +14,7 @@ const variantTitles: Record<string, string> = {
   info: 'Info',
   tldr: 'TL;DR',
   important: 'Important',
+  tbw: 'TBW',
 };
 
 const displayTitle = title ?? variantTitles[variant] ?? 'Note';
@@ -69,6 +70,11 @@ const hasAnchor = !!explicitId;
     background: rgba(136, 153, 170, 0.04);
   }
 
+  .callout[data-variant="tbw"] {
+    border-color: rgba(136, 153, 170, 0.25);
+    background: rgba(136, 153, 170, 0.04);
+  }
+
   .callout[data-variant="important"] {
     border-color: rgba(168, 85, 247, 0.3);
     background: rgba(168, 85, 247, 0.05);
@@ -118,6 +124,10 @@ const hasAnchor = !!explicitId;
   }
 
   .callout[data-variant="tldr"] .callout-title {
+    color: #8899aa;
+  }
+
+  .callout[data-variant="tbw"] .callout-title {
     color: #8899aa;
   }
 
