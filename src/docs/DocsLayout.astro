@@ -1,0 +1,24 @@
+---
+import DocsHeader from './DocsHeader.astro';
+import DocsSidebar, { type DocsNavGroup } from './DocsSidebar.astro';
+import PageToc, { type DocsHeading } from './PageToc.astro';
+import SearchDialog from './SearchDialog.astro';
+import { pageHref } from './paths';
+import './styles.css';
+
+interface Props { title: string; description?: string; section?: string; headings?: DocsHeading[]; navigation: DocsNavGroup[]; brandName: string; brandLogo?: string; manualLabel?: string; footerLeft?: string; footerRight?: string; themeName?: string; themeStorageKey?: string }
+const { title, description, section, headings = [], navigation, brandName, brandLogo, manualLabel, footerLeft, footerRight, themeName, themeStorageKey = 'astro-ui-docs-theme' } = Astro.props;
+const currentPath = Astro.url.pathname;
+const route = currentPath === '/' || currentPath === '/index.html' ? '/' : currentPath.replace(/\.html$/, '');
+const entries = navigation.flatMap((group) => group.items);
+const currentIndex = entries.findIndex((item) => item.href === route);
+const previous = currentIndex > 0 ? entries[currentIndex - 1] : undefined;
+const next = currentIndex >= 0 && currentIndex < entries.length - 1 ? entries[currentIndex + 1] : undefined;
+---
+<!doctype html><html lang="en" data-docs-theme={themeName}><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width" />{description && <meta name="description" content={description} />}<title>{title} · {brandName}</title><script is:inline define:vars={{ themeStorageKey }}>try { const saved = localStorage.getItem(themeStorageKey); document.documentElement.dataset.theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch (_) {}</script></head><body>
+  <DocsHeader brandName={brandName} brandLogo={brandLogo} manualLabel={manualLabel} />
+  <DocsSidebar navigation={navigation} footerLeft={footerLeft} footerRight={footerRight} />
+  <main class="docs-main" data-pagefind-body><article class="docs-article">{section && <p class="docs-eyebrow">{section}</p>}<h1>{title}</h1>{description && <p class="docs-lede">{description}</p>}<slot /><nav class="docs-pagination" aria-label="Adjacent pages">{previous ? <a href={pageHref(currentPath, previous.href)}><span>Previous</span><strong>← {previous.title}</strong></a> : <span />}{next && <a class="next" href={pageHref(currentPath, next.href)}><span>Next</span><strong>{next.title} →</strong></a>}</nav></article><PageToc headings={headings} /></main>
+  <SearchDialog />
+  <script is:inline define:vars={{ themeStorageKey }}>(() => { const root = document.documentElement; document.querySelector('[data-docs-theme-toggle]')?.addEventListener('click', () => { const theme = root.dataset.theme === 'dark' ? 'light' : 'dark'; root.dataset.theme = theme; try { localStorage.setItem(themeStorageKey, theme); } catch (_) {} }); const sidebar = document.querySelector('[data-docs-sidebar]'); document.querySelector('[data-docs-sidebar-open]')?.addEventListener('click', () => sidebar?.classList.add('open')); document.querySelectorAll('[data-docs-sidebar-close]').forEach((item) => item.addEventListener('click', () => sidebar?.classList.remove('open'))); document.addEventListener('keydown', (event) => { if (event.key === 'Escape') sidebar?.classList.remove('open'); }); })();</script>
+</body></html>

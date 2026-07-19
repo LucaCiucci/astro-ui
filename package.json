@@ -12,15 +12,17 @@
     "./components/hero_actions": "./src/components/hero_actions/index.ts",
     "./project": "./src/components/project/index.ts",
     "./layouts": "./src/layouts/index.ts",
+    "./docs": "./src/docs/index.ts",
+    "./docs/styles.css": "./src/docs/styles.css",
     "./styles/global.css": "./src/styles/global.css",
     "./utils": "./src/utils/index.ts"
   },
   "peerDependencies": {
-    "astro": "^5.0.0",
+    "astro": "^5.0.0 || ^6.0.0",
     "@types/markdown-it": "^14.1.2"
   },
   "devDependencies": {
-    "astro": "^5.13.0",
+    "astro": "^6.4.4",
     "typescript": "^5.0.0"
   },
   "keywords": [

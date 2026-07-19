@@ -1,0 +1,17 @@
+---
+import { pageHref } from './paths';
+export interface DocsNavItem { title: string; href: string; description?: string }
+export interface DocsNavGroup { title: string; items: DocsNavItem[] }
+interface Props { navigation: DocsNavGroup[]; footerLeft?: string; footerRight?: string }
+const { navigation, footerLeft, footerRight } = Astro.props;
+const currentPath = Astro.url.pathname;
+const current = currentPath === '/' || currentPath === '/index.html' ? '/' : currentPath.replace(/\.html$/, '');
+---
+<aside class="docs-sidebar" data-docs-sidebar>
+  <div class="docs-sidebar__mobile-head"><strong>Navigation</strong><button type="button" data-docs-sidebar-close aria-label="Close navigation">×</button></div>
+  <nav aria-label="Documentation navigation">
+    {navigation.map((group) => <section class="docs-nav-group"><h2>{group.title}</h2><ul>{group.items.map((item) => <li><a class:list={{ active: current === item.href }} aria-current={current === item.href ? 'page' : undefined} href={pageHref(currentPath, item.href)}>{item.title}</a></li>)}</ul></section>)}
+  </nav>
+  {(footerLeft || footerRight) && <footer><span>{footerLeft}</span><span>{footerRight}</span></footer>}
+</aside>
+<button class="docs-sidebar-backdrop" type="button" data-docs-sidebar-close aria-label="Close navigation"></button>

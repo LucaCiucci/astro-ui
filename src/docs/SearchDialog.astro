@@ -1,0 +1,19 @@
+---
+import { rootHref } from './paths';
+const root = rootHref(Astro.url.pathname);
+---
+<dialog class="docs-search-dialog" data-docs-search-dialog data-docs-root={root}>
+  <div class="docs-search-box"><form method="dialog" class="docs-search-head"><input type="search" data-docs-search-input placeholder="Search documentation…" autocomplete="off" aria-label="Search documentation" /><button value="close" aria-label="Close search">Esc</button></form><div class="docs-search-status" data-docs-search-status>Start typing to search the documentation.</div><ol class="docs-search-results" data-docs-search-results></ol><footer><span data-docs-search-engine></span></footer></div>
+</dialog>
+<script is:inline>
+(() => {
+  const dialog = document.querySelector('[data-docs-search-dialog]'); const input = dialog?.querySelector('[data-docs-search-input]'); const list = dialog?.querySelector('[data-docs-search-results]'); const status = dialog?.querySelector('[data-docs-search-status]'); const engine = dialog?.querySelector('[data-docs-search-engine]');
+  if (!(dialog instanceof HTMLDialogElement) || !(input instanceof HTMLInputElement) || !list || !status) return;
+  const rootUrl = new URL((dialog.dataset.docsRoot || '.') + '/', location.href); let pagefind; let localLoading; let sequence = 0;
+  const escape = (value) => value.replace(/[&<>"']/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+  const resultUrl = (url) => new URL(url.replace(/^\//, ''), rootUrl).href;
+  async function load() { if (location.protocol !== 'file:') { try { pagefind = await import(new URL('pagefind/pagefind.js', rootUrl).href); engine.textContent = 'Pagefind'; return; } catch (_) {} } if (!window.__ASTRO_UI_DOCS_SEARCH__) { localLoading ||= new Promise((resolve, reject) => { const script = document.createElement('script'); script.src = new URL('manual-search.js', rootUrl).href; script.onload = resolve; script.onerror = reject; document.head.append(script); }); await localLoading; } engine.textContent = 'Offline search'; }
+  async function search(query) { const run = ++sequence; if (!query.trim()) { list.innerHTML = ''; status.textContent = 'Start typing to search the documentation.'; return; } status.textContent = 'Searching…'; await load(); if (run !== sequence) return; let results; if (pagefind) { const response = await pagefind.search(query); results = await Promise.all(response.results.slice(0, 12).map((item) => item.data())); } else { const terms = query.toLowerCase().split(/\s+/).filter(Boolean); results = (window.__ASTRO_UI_DOCS_SEARCH__ || []).map((item) => { const haystack = `${item.title} ${item.text}`.toLowerCase(); const score = terms.reduce((total, term) => total + (item.title.toLowerCase().includes(term) ? 8 : 0) + (haystack.split(term).length - 1), 0); return { ...item, score }; }).filter((item) => item.score > 0).sort((a, b) => b.score - a.score).slice(0, 12); } if (run !== sequence) return; status.textContent = results.length ? `${results.length} result${results.length === 1 ? '' : 's'}` : 'No results found.'; list.innerHTML = results.map((result) => `<li><a href="${resultUrl(result.url)}"><strong>${escape(result.meta?.title || result.title || 'Untitled')}</strong><span>${result.excerpt || escape(result.text || '')}</span></a></li>`).join(''); }
+  document.querySelectorAll('[data-docs-search-open]').forEach((button) => button.addEventListener('click', () => { dialog.showModal(); setTimeout(() => input.focus(), 0); })); document.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); dialog.showModal(); input.focus(); } }); input.addEventListener('input', () => search(input.value)); dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+})();
+</script>

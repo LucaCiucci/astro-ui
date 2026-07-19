@@ -1,0 +1,12 @@
+---
+export interface DocsHeading { depth: number; slug: string; text: string }
+interface Props { headings?: DocsHeading[] }
+const { headings = [] } = Astro.props;
+const shown = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+{shown.length > 0 && (
+  <aside class="docs-page-toc" aria-label="On this page">
+    <h2>On this page</h2>
+    <ol>{shown.map((heading) => <li class:list={{ nested: heading.depth === 3 }}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ol>
+  </aside>
+)}
